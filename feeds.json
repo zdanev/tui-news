@@ -1,0 +1,18 @@
+[
+  {
+    "title": "CNN Top Stories",
+    "url": "http://rss.cnn.com/rss/cnn_topstories.rss"
+  },
+  {
+    "title": "CNN World News",
+    "url": "http://rss.cnn.com/rss/edition_world.rss"
+  },
+  {
+    "title": "CNN U.S. News",
+    "url": "http://rss.cnn.com/rss/edition_us.rss"
+  },
+  {
+    "title": "CNN Health News",
+    "url": "http://rss.cnn.com/rss/edition_health.rss"
+  }
+]
