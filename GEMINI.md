@@ -9,3 +9,5 @@
 - **Blank Lines:** Leave one blank line between properties, methods, and other members within a class to improve readability.
 
 - **Implicit Usings:** Utilize implicit `using` directives when possible to reduce boilerplate `using` statements in code files. Ensure `ImplicitUsings` is enabled in the project file.
+
+- **Window Classes:** Each Terminal.Gui window should be encapsulated in its own class, inheriting from `Terminal.Gui.Window`.
