@@ -9,4 +9,6 @@ public class Feed
 
     [JsonPropertyName("url")]
     public string? Url { get; set; }
+
+    public List<FeedItem> Items { get; set; } = new List<FeedItem>();
 }
