@@ -25,7 +25,7 @@ public class MainView : Window
     Width = Dim.Fill();
     Height = Dim.Fill();
 
-    feedsListView = new ListView(feeds.Select(f => f.Title).ToList())
+    feedsListView = new ListView(feeds.Select(f => " " + f.Title).ToList())
     {
       X = 0,
       Y = 0,
@@ -111,7 +111,11 @@ public class MainView : Window
       feed.IsLoaded = true; 
     }
 
-    feedItemsListView.SetSource(feed.Items.Select(i => i.PublishDate.DateTime.ToShortDateString() + " | " + i.Title).ToList());
+    feedItemsListView.SetSource(feed.Items.Select(i =>
+      " "
+      + i.PublishDate.DateTime.ToShortDateString().PadLeft(10)
+      + " │ "
+      + i.Title).ToList());
 
     // Show the first item.
     OnFeedItemSelectedChanged(new ListViewItemEventArgs(feedItemsListView.SelectedItem, feed.Items[feedItemsListView.SelectedItem]));
