@@ -6,16 +6,20 @@ namespace TuiNews.Views;
 
 public class MainView : Window
 {
+  private readonly FeedsService feedsService;
+  private readonly ListView feedsListView;
+
   public MainView(FeedsService feedsService) : base("TUI News")
   {
+    this.feedsService = feedsService;
+    var feeds = feedsService.LoadFeeds();
+
     X = 0;
     Y = 0;
     Width = Dim.Fill();
     Height = Dim.Fill();
 
-    var feeds = feedsService.LoadFeeds();
-    var feedTitles = feeds.Select(f => f.Title).ToArray();
-    var feedsListView = new ListView(feedTitles)
+    feedsListView = new ListView(feeds.Select(f => f.Title).ToList())
     {
       X = 0,
       Y = 0,
@@ -32,12 +36,13 @@ public class MainView : Window
     };
     Add(verticalLine);
 
+
+
     var statusBar = new StatusBar([
       new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", null),
       new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", null),
       new StatusItem(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop()),
     ]);
-
     Application.Top.Add(statusBar);
   }
 }
