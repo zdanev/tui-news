@@ -3,11 +3,13 @@ namespace TuiNews.Views;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using TuiNews.Services;
+using TuiNews.Models;
 
 public class MainView : Window
 {
   private readonly FeedsService feedsService;
   private readonly ListView feedsListView;
+  private readonly List<Feed> feeds;
   private readonly ListView feedItemsListView;
   private readonly Label titleLabel;
   private readonly Label urlLabel;
@@ -16,7 +18,7 @@ public class MainView : Window
   public MainView(FeedsService feedsService) : base("TUI News")
   {
     this.feedsService = feedsService;
-    var feeds = feedsService.LoadFeeds();
+    feeds = feedsService.LoadFeeds();
 
     X = 0;
     Y = 0;
@@ -30,6 +32,7 @@ public class MainView : Window
       Width = 30,
       Height = Dim.Fill() - 1
     };
+    feedsListView.SelectedItemChanged += OnFeedSelectedChanged;
     Add(feedsListView);
 
     var verticalLine = new LineView(Orientation.Vertical)
@@ -93,5 +96,19 @@ public class MainView : Window
       new StatusItem(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop()),
     ]);
     Application.Top.Add(statusBar);
+
+    feedItemsListView.SetSource(feeds[feedsListView.SelectedItem].Items.Select(i => i.Title).ToList());
+  }
+
+  private void OnFeedSelectedChanged(ListViewItemEventArgs args)
+  {
+    var feed = feeds[feedsListView.SelectedItem];
+    if (!feed.IsLoaded)
+    {
+      feed = feedsService.ReadFeed(feed.Url!);
+      feeds[feedsListView.SelectedItem] = feed;
+    }
+
+    feedItemsListView.SetSource(feed.Items.Select(i => i.Title).ToList());
   }
 }

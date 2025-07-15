@@ -10,5 +10,7 @@ public class Feed
     [JsonPropertyName("url")]
     public string? Url { get; set; }
 
+    public bool IsLoaded { get; set; } = false;
+
     public List<FeedItem> Items { get; set; } = new List<FeedItem>();
 }
