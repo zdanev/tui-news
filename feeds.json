@@ -1,18 +1,78 @@
 [
   {
-    "title": "CNN Top Stories",
-    "url": "http://rss.cnn.com/rss/cnn_topstories.rss"
+    "title": "TechCrunch",
+    "url": "https://techcrunch.com/category/startups/feed/"
   },
   {
-    "title": "CNN World News",
-    "url": "http://rss.cnn.com/rss/edition_world.rss"
+    "title": "WIRED",
+    "url": "https://www.wired.com/feed/rss"
   },
   {
-    "title": "CNN U.S. News",
-    "url": "http://rss.cnn.com/rss/edition_us.rss"
+    "title": "Mashable",
+    "url": "https://feeds.feedburner.com/Mashable"
   },
   {
-    "title": "CNN Health News",
-    "url": "http://rss.cnn.com/rss/cnn_health.rss"
+    "title": "CNET",
+    "url": "https://www.cnet.com/rss/news/"
+  },
+  {
+    "title": "Engadget",
+    "url": "https://www.engadget.com/rss.xml"
+  },
+  {
+    "title": "VentureBeat",
+    "url": "https://venturebeat.com/feed/"
+  },
+  {
+    "title": "GeekWire",
+    "url": "https://www.geekwire.com/feed/"
+  },
+  {
+    "title": "The Next Web (TNW)",
+    "url": "https://feeds.feedburner.com/thenextweb"
+  },
+  {
+    "title": "Ars Technica",
+    "url": "https://feeds.feedburner.com/arstechnica/index"
+  },
+  {
+    "title": "TechRadar",
+    "url": "https://www.techradar.com/rss"
+  },
+  {
+    "title": "Techmeme",
+    "url": "https://www.techmeme.com/feed.xml"
+  },
+  {
+    "title": "MIT Technology Review",
+    "url": "https://www.technologyreview.com/feed/"
+  },
+  {
+    "title": "ReadWrite",
+    "url": "https://readwrite.com/feed/"
+  },
+  {
+    "title": "Lifehacker",
+    "url": "https://lifehacker.com/rss/regular/"
+  },
+  {
+    "title": "Macworld",
+    "url": "https://www.macworld.com/feed"
+  },
+  {
+    "title": "MakeUseOf",
+    "url": "https://www.makeuseof.com/category/tech/feed/"
+  },
+  {
+    "title": "TechRepublic",
+    "url": "https://www.techrepublic.com/rssfeeds/articles/"
+  },
+  {
+    "title": "The Verge",
+    "url": "https://www.theverge.com/rss/index.xml"
+  },
+  {
+    "title": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/feed/"
   }
 ]

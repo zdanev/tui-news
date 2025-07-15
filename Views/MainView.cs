@@ -111,7 +111,7 @@ public class MainView : Window
       feed.IsLoaded = true; 
     }
 
-    feedItemsListView.SetSource(feed.Items.Select(i => i.PublishDate.DateTime.ToShortDateString() + " " + i.Title).ToList());
+    feedItemsListView.SetSource(feed.Items.Select(i => i.PublishDate.DateTime.ToShortDateString() + " | " + i.Title).ToList());
 
     // Show the first item.
     OnFeedItemSelectedChanged(new ListViewItemEventArgs(feedItemsListView.SelectedItem, feed.Items[feedItemsListView.SelectedItem]));
@@ -122,7 +122,7 @@ public class MainView : Window
     var feed = feeds[feedsListView.SelectedItem];
     var item = feed.Items[feedItemsListView.SelectedItem];
 
-    titleLabel.Text = item.Title;
+    titleLabel.Text = item.PublishDate.DateTime.ToShortDateString() + "  " + item.Title;
     urlLabel.Text = item.Link ?? "";
     contentTextView.Text = item.Summary ?? "";
   }
