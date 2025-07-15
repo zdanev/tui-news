@@ -4,7 +4,7 @@ using TuiNews.Views;
 
 var feedsService = new FeedsService("feeds.json");
 
-// var feed = feedsService.ReadFeed("https://www.geekwire.com/feed/");
+// var feed = feedsService.ReadFeed("https://www.macworld.com/feed");
 // foreach (var item in feed.Items)
 // {
 //   Console.WriteLine(item.Title);

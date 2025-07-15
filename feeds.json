@@ -44,20 +44,8 @@
     "url": "https://www.technologyreview.com/feed/"
   },
   {
-    "title": "ReadWrite",
-    "url": "https://readwrite.com/feed/"
-  },
-  {
     "title": "Lifehacker",
     "url": "https://lifehacker.com/rss/regular/"
-  },
-  {
-    "title": "Macworld",
-    "url": "https://www.macworld.com/feed"
-  },
-  {
-    "title": "MakeUseOf",
-    "url": "https://www.makeuseof.com/category/tech/feed/"
   },
   {
     "title": "TechRepublic",
@@ -70,5 +58,69 @@
   {
     "title": "BleepingComputer",
     "url": "https://www.bleepingcomputer.com/feed/"
+  },
+  {
+    "title": "Cup of Jo",
+    "url": "https://cupofjo.com/feed/"
+  },
+  {
+    "title": "The Blonde Abroad",
+    "url": "https://theblondeabroad.com/feed"
+  },
+  {
+    "title": "Camille Styles",
+    "url": "https://camillestyles.com/feed"
+  },
+  {
+    "title": "Wit And Delight Blog",
+    "url": "https://witanddelight.com/feed"
+  },
+  {
+    "title": "Corporette",
+    "url": "https://corporette.com/feed/"
+  },
+  {
+    "title": "Julie Blanner",
+    "url": "https://julieblanner.com/feed"
+  },
+  {
+    "title": "BBC News - World",
+    "url": "http://feeds.bbci.co.uk/news/world/rss.xml"
+  },
+  {
+    "title": "BBC News - UK",
+    "url": "http://feeds.bbci.co.uk/news/uk/rss.xml"
+  },
+  {
+    "title": "BBC News - Health",
+    "url": "http://feeds.bbci.co.uk/news/health/rss.xml"
+  },
+  {
+    "title": "BBC News - Business",
+    "url": "http://feeds.bbci.co.uk/news/business/rss.xml"
+  },
+  {
+    "title": "BBC News - Technology",
+    "url": "http://feeds.bbci.co.uk/news/technology/rss.xml"
+  },
+  {
+    "title": "BBC News - Science & Environment",
+    "url": "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+  },
+  {
+    "title": "BBC News - Entertainment & Arts",
+    "url": "http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+  },
+  {
+    "title": "BBC News - Culture",
+    "url": "http://feeds.bbci.co.uk/news/culture/rss.xml"
+  },
+  {
+    "title": "BBC News - Travel",
+    "url": "http://feeds.bbci.co.uk/news/travel/rss.xml"
+  },
+  {
+    "title": "BBC Sport",
+    "url": "http://feeds.bbci.co.uk/sport/rss.xml"
   }
 ]

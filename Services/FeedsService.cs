@@ -21,32 +21,54 @@ public class FeedsService
             return new List<Feed>();
         }
 
-        var jsonString = File.ReadAllText(feedsFilePath);
-        return JsonSerializer.Deserialize<List<Feed>>(jsonString)!;
+        try
+        {
+            var jsonString = File.ReadAllText(feedsFilePath);
+            return JsonSerializer.Deserialize<List<Feed>>(jsonString)!;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading feeds from {feedsFilePath}: {ex.Message}");
+            return new List<Feed>();
+        }
     }
 
     public Feed ReadFeed(string feedUrl)
     {
-        using var reader = XmlReader.Create(feedUrl);
-        var syndicationFeed = SyndicationFeed.Load(reader);
-
-        var feed = new Feed
+        try
         {
-            Title = syndicationFeed.Title?.Text,
-            Url = feedUrl
-        };
+            using var reader = XmlReader.Create(feedUrl);
+            var syndicationFeed = SyndicationFeed.Load(reader);
 
-        foreach (var item in syndicationFeed.Items)
-        {
-            feed.Items.Add(new FeedItem
+            var feed = new Feed
             {
-                Title = item.Title?.Text,
-                PublishDate = item.PublishDate,
-                Link = item.Links.FirstOrDefault()?.Uri.ToString(),
-                Summary = item.Summary?.Text
-            });
-        }
+                Title = syndicationFeed.Title?.Text,
+                Url = feedUrl
+            };
 
-        return feed;
+            foreach (var item in syndicationFeed.Items)
+            {
+                feed.Items.Add(new FeedItem
+                {
+                    Title = item.Title?.Text,
+                    PublishDate = item.PublishDate,
+                    Link = item.Links.FirstOrDefault()?.Uri.ToString(),
+                    Summary = item.Summary?.Text
+                });
+            }
+
+            return feed;
+        }
+        catch (Exception ex)
+        {
+            // Log the exception or handle it as appropriate for your application
+            Console.WriteLine($"Error reading feed {feedUrl}: {ex.Message}");
+            return new Feed
+            {
+                Title = $"Error loading feed: {feedUrl}",
+                Url = feedUrl,
+                Items = new List<FeedItem>()
+            };
+        }
     }
 }

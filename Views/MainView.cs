@@ -99,16 +99,23 @@ public class MainView : Window
     Application.Top.Add(statusBar);
 
     // Load the first feed.
-    OnFeedSelectedChanged(new ListViewItemEventArgs(0, feeds[0]));
+    if (feeds.Any())
+    {
+        OnFeedSelectedChanged(new ListViewItemEventArgs(0, feeds[0]));
+    }
   }
 
   private void OnFeedSelectedChanged(ListViewItemEventArgs args)
   {
+    if (feedsListView.SelectedItem < 0 || feedsListView.SelectedItem >= feeds.Count)
+    {
+      return;
+    }
     var feed = feeds[feedsListView.SelectedItem];
     if (!feed.IsLoaded)
     {
       feed.Items = feedsService.ReadFeed(feed.Url!).Items; // TODO: fix
-      feed.IsLoaded = true; 
+      feed.IsLoaded = true;
     }
 
     feedItemsListView.SetSource(feed.Items.Select(i =>
@@ -118,12 +125,30 @@ public class MainView : Window
       + i.Title).ToList());
 
     // Show the first item.
-    OnFeedItemSelectedChanged(new ListViewItemEventArgs(feedItemsListView.SelectedItem, feed.Items[feedItemsListView.SelectedItem]));
+    if (feed.Items.Any())
+    {
+      OnFeedItemSelectedChanged(new ListViewItemEventArgs(feedItemsListView.SelectedItem, feed.Items[feedItemsListView.SelectedItem]));
+    }
+    else
+    {
+      titleLabel.Text = "";
+      urlLabel.Text = "";
+      contentTextView.Text = "";
+    }
   }
 
   private void OnFeedItemSelectedChanged(ListViewItemEventArgs args)
   {
+    if (feedsListView.SelectedItem < 0 || feedsListView.SelectedItem >= feeds.Count)
+    {
+        return;
+    }
     var feed = feeds[feedsListView.SelectedItem];
+
+    if (feedItemsListView.SelectedItem < 0 || feedItemsListView.SelectedItem >= feed.Items.Count)
+    {
+        return;
+    }
     var item = feed.Items[feedItemsListView.SelectedItem];
 
     titleLabel.Text = item.PublishDate.DateTime.ToShortDateString() + "  " + item.Title;
