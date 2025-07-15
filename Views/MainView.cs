@@ -1,4 +1,5 @@
 using Terminal.Gui;
+using Terminal.Gui.Graphs;
 using TuiNews.Services;
 
 namespace TuiNews.Views;
@@ -22,6 +23,14 @@ public class MainView : Window
       Height = Dim.Fill() - 1
     };
     Add(feedsListView);
+
+    var verticalLine = new LineView(Orientation.Vertical)
+    {
+      X = Pos.Right(feedsListView),
+      Y = 0,
+      Height = Dim.Fill()
+    };
+    Add(verticalLine);
 
     var statusBar = new StatusBar([
       new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", null),
