@@ -122,5 +122,9 @@
   {
     "title": "BBC Sport",
     "url": "http://feeds.bbci.co.uk/sport/rss.xml"
+  },
+  {
+    "title": "Hacker News",
+    "url": "https://news.ycombinator.com/rss"
   }
 ]
