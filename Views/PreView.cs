@@ -1,12 +1,11 @@
+namespace TuiNews.Views;
+
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
 using Terminal.Gui;
 using TuiNews.Models;
-
-namespace TuiNews.Views;
 
 public class PreView : Window
 {
@@ -17,7 +16,7 @@ public class PreView : Window
         this.item = item;
         Title = item.Title;
         X = 0;
-        Y = 1;
+        Y = 0;
         Width = Dim.Fill();
         Height = Dim.Fill();
 
@@ -85,6 +84,15 @@ public class PreView : Window
         if (keyEvent.Key == Key.Esc)
         {
             RequestStop();
+            return true;
+        }
+
+        if (keyEvent.Key == (Key.O | Key.CtrlMask))
+        {
+            if (!string.IsNullOrEmpty(item.Link))
+            {
+                Process.Start(new ProcessStartInfo { FileName = item.Link, UseShellExecute = true });
+            }
             return true;
         }
 

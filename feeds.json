@@ -1,5 +1,9 @@
 [
   {
+    "title": "Hacker News",
+    "url": "https://news.ycombinator.com/rss"
+  },
+  {
     "title": "TechCrunch",
     "url": "https://techcrunch.com/category/startups/feed/"
   },
@@ -122,9 +126,5 @@
   {
     "title": "BBC Sport",
     "url": "http://feeds.bbci.co.uk/sport/rss.xml"
-  },
-  {
-    "title": "Hacker News",
-    "url": "https://news.ycombinator.com/rss"
   }
 ]
