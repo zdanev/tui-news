@@ -1,9 +1,9 @@
-using System.Text.Json;
+namespace TuiNews.Services;
+
 using System.ServiceModel.Syndication;
+using System.Text.Json;
 using System.Xml;
 using TuiNews.Models;
-
-namespace TuiNews.Services;
 
 public class FeedsService
 {
@@ -24,7 +24,8 @@ public class FeedsService
         try
         {
             var jsonString = File.ReadAllText(feedsFilePath);
-            return JsonSerializer.Deserialize<List<Feed>>(jsonString)!;
+            var feeds = JsonSerializer.Deserialize<List<Feed>>(jsonString) ?? new List<Feed>();
+            return feeds;
         }
         catch (Exception ex)
         {
@@ -33,42 +34,56 @@ public class FeedsService
         }
     }
 
-    public Feed ReadFeed(string feedUrl)
+    public void SaveFeeds(IEnumerable<Feed> feeds)
     {
         try
         {
-            using var reader = XmlReader.Create(feedUrl);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var jsonString = JsonSerializer.Serialize(feeds, options);
+            File.WriteAllText(feedsFilePath, jsonString);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving feeds to {feedsFilePath}: {ex.Message}");
+        }
+    }
+
+    public void LoadFeedItems(Feed feed)
+    {
+        if (string.IsNullOrEmpty(feed.Url)) return;
+
+        try
+        {
+            using var reader = XmlReader.Create(feed.Url);
             var syndicationFeed = SyndicationFeed.Load(reader);
 
-            var feed = new Feed
-            {
-                Title = syndicationFeed.Title?.Text,
-                Url = feedUrl
-            };
+            feed.Title ??= syndicationFeed.Title?.Text;
 
+            var newItems = new List<FeedItem>();
             foreach (var item in syndicationFeed.Items)
             {
-                feed.Items.Add(new FeedItem
+                var feedItem = new FeedItem
                 {
                     Title = item.Title?.Text,
                     PublishDate = item.PublishDate,
                     Link = item.Links.FirstOrDefault()?.Uri.ToString(),
                     Summary = item.Summary?.Text
-                });
+                };
+
+                if (feed.ReadHashes.Contains(feedItem.Fingerprint))
+                {
+                    feedItem.IsUnread = false;
+                }
+                newItems.Add(feedItem);
             }
 
-            return feed;
+            feed.Items = newItems.OrderByDescending(i => i.PublishDate).ToList();
+            feed.IsLoaded = true;
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it as appropriate for your application
-            Console.WriteLine($"Error reading feed {feedUrl}: {ex.Message}");
-            return new Feed
-            {
-                Title = $"Error loading feed: {feedUrl}",
-                Url = feedUrl,
-                Items = new List<FeedItem>()
-            };
+            Console.WriteLine($"Error reading feed {feed.Url}: {ex.Message}");
+            feed.Title = $"Error loading feed: {feed.Url}";
         }
     }
 }

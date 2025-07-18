@@ -1,10 +1,10 @@
-namespace TuiNews.Views;
-
+using System.Threading;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
-using TuiNews.Services;
 using TuiNews.Models;
-using TuiNews.Views;
+using TuiNews.Services;
+
+namespace TuiNews.Views;
 
 public class MainView : Window
 {
@@ -15,25 +15,28 @@ public class MainView : Window
     private readonly Label titleLabel;
     private readonly Label urlLabel;
     private readonly TextView contentTextView;
+    private readonly StatusItem refreshFeedStatusItem;
+    private readonly StatusItem refreshAllStatusItem;
+    private Timer? autoReadTimer;
 
-    public MainView(FeedsService feedsService) : base("TUI News")
+    public MainView(FeedsService feedsService)
+        : base("TUI News")
     {
         this.feedsService = feedsService;
-        feeds = feedsService.LoadFeeds();
 
         X = 0;
         Y = 0;
         Width = Dim.Fill();
         Height = Dim.Fill();
 
-        feedsListView = new ListView(feeds.Select(f => " " + f.Title).ToList())
+        feedsListView = new ListView
         {
             X = 0,
             Y = 0,
             Width = 30,
             Height = Dim.Fill() - 1
         };
-        feedsListView.SelectedItemChanged += OnFeedSelectedChanged;
+        feedsListView.SelectedItemChanged += OnFeedSelected;
         Add(feedsListView);
 
         var verticalLine = new LineView(Orientation.Vertical)
@@ -44,15 +47,15 @@ public class MainView : Window
         };
         // Add(verticalLine);
 
-        feedItemsListView = new ListView()
+        feedItemsListView = new ListView
         {
             X = Pos.Right(verticalLine),
             Y = 0,
             Width = Dim.Fill(),
             Height = 10
         };
-        feedItemsListView.SelectedItemChanged += OnFeedItemSelectedChanged;
-        feedItemsListView.KeyPress += OnFeedItemKeyPress;
+        feedItemsListView.SelectedItemChanged += OnFeedItemSelected;
+        feedItemsListView.OpenSelectedItem += OnFeedItemOpened;
         Add(feedItemsListView);
 
         var horizontalLine = new LineView(Orientation.Horizontal)
@@ -82,7 +85,7 @@ public class MainView : Window
         };
         Add(urlLabel);
 
-        contentTextView = new TextView()
+        contentTextView = new TextView
         {
             X = Pos.Right(verticalLine),
             Y = Pos.Bottom(urlLabel),
@@ -93,83 +96,129 @@ public class MainView : Window
         };
         Add(contentTextView);
 
-        var statusBar = new StatusBar([
-          new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", null),
-      new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", null),
-      new StatusItem(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop()),
-    ]);
+        refreshFeedStatusItem = new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", RefreshFeed);
+        refreshAllStatusItem = new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", RefreshAllFeeds);
+
+        var statusBar = new StatusBar(new[]
+        {
+            refreshFeedStatusItem,
+            refreshAllStatusItem,
+            new(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop())
+        });
         Application.Top.Add(statusBar);
 
-        // Load the first feed.
+        feeds = new List<Feed>();
+        LoadFeeds();
+    }
+
+    private void LoadFeeds()
+    {
+        var loadedFeeds = feedsService.LoadFeeds();
+        feeds.Clear();
+        feeds.AddRange(loadedFeeds);
+        UpdateFeedsListView();
         if (feeds.Any())
         {
-            OnFeedSelectedChanged(new ListViewItemEventArgs(0, feeds[0]));
+            feedsListView.SelectedItem = 0;
         }
     }
 
-    private void OnFeedSelectedChanged(ListViewItemEventArgs args)
+    private void UpdateFeedsListView()
     {
-        if (feedsListView.SelectedItem < 0 || feedsListView.SelectedItem >= feeds.Count)
-        {
-            return;
-        }
-        var feed = feeds[feedsListView.SelectedItem];
+        feedsListView.SetSource(feeds.Select(GetFeedTitle).ToList());
+    }
+
+    private string GetFeedTitle(Feed feed)
+    {
+        var unreadCount = feed.Items.Count(i => i.IsUnread);
+        return unreadCount > 0 ? $"{feed.Title} ({unreadCount})" : feed.Title ?? string.Empty;
+    }
+
+    private void OnFeedSelected(ListViewItemEventArgs args)
+    {
+        var feed = feeds[args.Item];
         if (!feed.IsLoaded)
         {
-            feed.Items = feedsService.ReadFeed(feed.Url!).Items; // TODO: fix
-            feed.IsLoaded = true;
+            feedsService.LoadFeedItems(feed);
+            UpdateFeedsListView();
         }
+        UpdateFeedItemsListView(feed);
 
-        feedItemsListView.SetSource(feed.Items.Select(i =>
-          " "
-          + i.PublishDate.DateTime.ToShortDateString().PadLeft(10)
-          + " │ "
-          + i.Title).ToList());
-
-        // Show the first item.
         if (feed.Items.Any())
         {
-            OnFeedItemSelectedChanged(new ListViewItemEventArgs(feedItemsListView.SelectedItem, feed.Items[feedItemsListView.SelectedItem]));
-        }
-        else
-        {
-            titleLabel.Text = "";
-            urlLabel.Text = "";
-            contentTextView.Text = "";
+            OnFeedItemSelected(new ListViewItemEventArgs(0, feed.Items[0]));
         }
     }
 
-    private void OnFeedItemSelectedChanged(ListViewItemEventArgs args)
+    private void UpdateFeedItemsListView(Feed feed)
     {
-        if (feedsListView.SelectedItem < 0 || feedsListView.SelectedItem >= feeds.Count)
-        {
-            return;
-        }
+        feedItemsListView.SetSource(feed.Items.Select(GetFeedItemTitle).ToList());
+    }
+
+    private string GetFeedItemTitle(FeedItem item)
+    {
+        var unreadIndicator = item.IsUnread ? "* " : "  ";
+        return $"{unreadIndicator}{item.PublishDate.DateTime.ToShortDateString(),-10} │ {item.Title}";
+    }
+
+    private void OnFeedItemSelected(ListViewItemEventArgs args)
+    {
         var feed = feeds[feedsListView.SelectedItem];
+        var item = feed.Items[args.Item];
 
-        if (feedItemsListView.SelectedItem < 0 || feedItemsListView.SelectedItem >= feed.Items.Count)
+        titleLabel.Text = item.Title;
+        urlLabel.Text = item.Link;
+        contentTextView.Text = item.Summary;
+
+        if (item.IsUnread)
         {
-            return;
+            autoReadTimer?.Dispose();
+            autoReadTimer = new Timer(_ =>
+            {
+                Application.MainLoop.Invoke(() =>
+                {
+                    item.IsUnread = false;
+                    feed.ReadHashes.Add(item.Fingerprint);
+                    feedsService.SaveFeeds(feeds);
+                    UpdateFeedsListView();
+                    UpdateFeedItemsListView(feed);
+                });
+            }, null, 3000, Timeout.Infinite);
         }
-        var item = feed.Items[feedItemsListView.SelectedItem];
-
-        titleLabel.Text = item.PublishDate.DateTime.ToShortDateString() + "  " + item.Title;
-        urlLabel.Text = item.Link ?? "";
-        contentTextView.Text = item.Summary ?? "";
     }
 
-    private void OnFeedItemKeyPress(KeyEventEventArgs args)
+    private void OnFeedItemOpened(ListViewItemEventArgs args)
     {
-        if (args.KeyEvent.Key == Key.Enter)
+        var feed = feeds[feedsListView.SelectedItem];
+        var item = feed.Items[args.Item];
+
+        Application.Run(new PreView(item));
+
+        if (item.IsUnread)
         {
-            var feed = feeds[feedsListView.SelectedItem];
-            var item = feed.Items[feedItemsListView.SelectedItem];
-            var preView = new PreView(item)
-            {
-                // Modal = true
-            };
-            Application.Run(preView);
-            args.Handled = true;
+            item.IsUnread = false;
+            feed.ReadHashes.Add(item.Fingerprint);
+            feedsService.SaveFeeds(feeds);
+            UpdateFeedsListView();
+            UpdateFeedItemsListView(feed);
         }
+    }
+
+    private void RefreshFeed()
+    {
+        var feed = feeds[feedsListView.SelectedItem];
+        feedsService.LoadFeedItems(feed);
+        UpdateFeedsListView();
+        UpdateFeedItemsListView(feed);
+    }
+
+    private void RefreshAllFeeds()
+    {
+        foreach (var feed in feeds)
+        {
+            feedsService.LoadFeedItems(feed);
+        }
+        UpdateFeedsListView();
+        UpdateFeedItemsListView(feeds[feedsListView.SelectedItem]);
     }
 }

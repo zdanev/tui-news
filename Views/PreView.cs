@@ -10,6 +10,7 @@ using TuiNews.Models;
 public class PreView : Window
 {
     private readonly FeedItem item;
+    private readonly System.Timers.Timer autoCloseTimer;
 
     public PreView(FeedItem item)
     {
@@ -20,7 +21,7 @@ public class PreView : Window
         Width = Dim.Fill();
         Height = Dim.Fill();
 
-        var textView = new TextView()
+        var textView = new TextView
         {
             Text = "Loading...",
             Width = Dim.Fill(),
@@ -30,7 +31,7 @@ public class PreView : Window
         };
         Add(textView);
 
-        if (item.Link is not null)
+        if (item.Link != null)
         {
             LoadArticle(item.Link, textView);
         }
@@ -38,16 +39,15 @@ public class PreView : Window
         {
             textView.Text = "No URL provided.";
         }
+
+        autoCloseTimer = new System.Timers.Timer(3000);
+        autoCloseTimer.Elapsed += (sender, e) => Application.RequestStop();
+        autoCloseTimer.AutoReset = false;
+        autoCloseTimer.Start();
     }
 
     private async void LoadArticle(string url, TextView textView)
     {
-        if (string.IsNullOrEmpty(url))
-        {
-            textView.Text = "No URL provided.";
-            return;
-        }
-
         try
         {
             using var httpClient = new HttpClient();
@@ -57,16 +57,15 @@ public class PreView : Window
 
             var article = new StringBuilder();
             var nodes = htmlDoc.DocumentNode.SelectNodes("//p");
-            if (nodes is not null)
+            if (nodes != null)
             {
                 foreach (var node in nodes)
                 {
-                    // Clean up the text by removing extra whitespace and newlines
                     var cleanedText = node.InnerText.Trim();
                     if (!string.IsNullOrEmpty(cleanedText))
                     {
                         article.AppendLine(cleanedText);
-                        article.AppendLine(); // Add a newline for better readability
+                        article.AppendLine();
                     }
                 }
             }
@@ -99,5 +98,9 @@ public class PreView : Window
         return base.ProcessKey(keyEvent);
     }
 
-    
+    protected override void Dispose(bool disposing)
+    {
+        autoCloseTimer.Dispose();
+        base.Dispose(disposing);
+    }
 }

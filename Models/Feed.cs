@@ -1,6 +1,7 @@
+namespace TuiNews.Models;
+
 using System.Text.Json.Serialization;
 
-namespace TuiNews.Models;
 
 public class Feed
 {
@@ -10,7 +11,10 @@ public class Feed
     [JsonPropertyName("url")]
     public string? Url { get; set; }
 
+    [JsonPropertyName("read_hashes")]
+    public HashSet<string> ReadHashes { get; set; } = [];
+
     public bool IsLoaded { get; set; } = false;
 
-    public List<FeedItem> Items { get; set; } = new List<FeedItem>();
+    public List<FeedItem> Items { get; set; } = [];
 }
