@@ -1,10 +1,10 @@
+namespace TuiNews.Views;
+
 using System.Threading;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
 using TuiNews.Models;
 using TuiNews.Services;
-
-namespace TuiNews.Views;
 
 public class MainView : Window
 {
@@ -183,8 +183,7 @@ public class MainView : Window
                 {
                     item.IsUnread = false;
                     feed.ReadHashes.Add(item.Fingerprint);
-                    feedsService.SaveFeedsAsync(feeds);
-                    UpdateFeedsListView();
+                    _ = feedsService.SaveFeedsAsync(feeds);
                     UpdateFeedItemsListView(feed);
                 });
             }, null, 3000, Timeout.Infinite);
@@ -203,7 +202,6 @@ public class MainView : Window
             item.IsUnread = false;
             feed.ReadHashes.Add(item.Fingerprint);
             await feedsService.SaveFeedsAsync(feeds);
-            UpdateFeedsListView();
             UpdateFeedItemsListView(feed);
         }
     }
