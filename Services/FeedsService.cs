@@ -1,11 +1,10 @@
 namespace TuiNews.Services;
 
+using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Text.Json;
 using System.Xml;
 using TuiNews.Models;
-using System.Net.Http;
-
 
 public class FeedsService
 {
@@ -30,7 +29,7 @@ public class FeedsService
             var feeds = JsonSerializer.Deserialize<List<Feed>>(jsonString) ?? new List<Feed>();
             return feeds;
         }
-        catch (Exception ex)
+        catch // (Exception ex)
         {
             // Console.WriteLine($"Error loading feeds from {feedsFilePath}: {ex.Message}");
             return new List<Feed>();
@@ -45,7 +44,7 @@ public class FeedsService
             var jsonString = JsonSerializer.Serialize(feeds, options);
             await File.WriteAllTextAsync(feedsFilePath, jsonString);
         }
-        catch (Exception ex)
+        catch // (Exception ex)
         {
             // Console.WriteLine($"Error saving feeds to {feedsFilePath}: {ex.Message}");
         }
@@ -85,7 +84,7 @@ public class FeedsService
             feed.Items = newItems.OrderByDescending(i => i.PublishDate).ToList();
             feed.IsLoaded = true;
         }
-        catch (Exception ex)
+        catch // (Exception ex)
         {
             // Console.WriteLine($"Error reading feed {feed.Url}: {ex.Message}");
             feed.Title = $"Error loading feed: {feed.Url}";
