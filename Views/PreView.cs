@@ -10,8 +10,6 @@ using TuiNews.Models;
 public class PreView : Window
 {
     private readonly FeedItem item;
-    private readonly System.Timers.Timer autoCloseTimer;
-
     public PreView(FeedItem item)
     {
         this.item = item;
@@ -39,11 +37,6 @@ public class PreView : Window
         {
             textView.Text = "No URL provided.";
         }
-
-        autoCloseTimer = new System.Timers.Timer(3000);
-        autoCloseTimer.Elapsed += (sender, e) => Application.RequestStop();
-        autoCloseTimer.AutoReset = false;
-        autoCloseTimer.Start();
     }
 
     private async void LoadArticle(string url, TextView textView)
@@ -100,7 +93,6 @@ public class PreView : Window
 
     protected override void Dispose(bool disposing)
     {
-        autoCloseTimer.Dispose();
         base.Dispose(disposing);
     }
 }
