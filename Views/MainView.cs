@@ -45,7 +45,7 @@ public class MainView : Window
             Y = 0,
             Height = Dim.Fill()
         };
-        // Add(verticalLine);
+        Add(verticalLine);
 
         feedItemsListView = new ListView
         {
@@ -65,7 +65,6 @@ public class MainView : Window
             Width = Dim.Fill()
         };
         Add(horizontalLine);
-        Add(verticalLine); // !!!
 
         titleLabel = new Label("Title:")
         {
@@ -125,7 +124,9 @@ public class MainView : Window
 
     private void UpdateFeedsListView()
     {
+        var currentFeedSelection = feedsListView.SelectedItem;
         feedsListView.SetSource(feeds.Select(GetFeedTitle).ToList());
+        feedsListView.SelectedItem = currentFeedSelection;
     }
 
     private string GetFeedTitle(Feed feed)
@@ -152,7 +153,9 @@ public class MainView : Window
 
     private void UpdateFeedItemsListView(Feed feed)
     {
+        var currentItemSelection = feedItemsListView.SelectedItem;
         feedItemsListView.SetSource(feed.Items.Select(GetFeedItemTitle).ToList());
+        feedItemsListView.SelectedItem = currentItemSelection;
     }
 
     private string GetFeedItemTitle(FeedItem item)
