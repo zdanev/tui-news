@@ -95,8 +95,8 @@ public class MainView : Window
         };
         Add(contentTextView);
 
-        refreshFeedStatusItem = new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", RefreshFeed);
-        refreshAllStatusItem = new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", RefreshAllFeeds);
+        refreshFeedStatusItem = new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", async () => await RefreshFeedAsync());
+        refreshAllStatusItem = new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", async () => await RefreshAllFeedsAsync());
 
         var statusBar = new StatusBar(new[]
         {
@@ -107,18 +107,19 @@ public class MainView : Window
         Application.Top.Add(statusBar);
 
         feeds = new List<Feed>();
-        LoadFeeds();
+                _ = LoadFeedsAsync();
     }
 
-    private void LoadFeeds()
+    private async Task LoadFeedsAsync()
     {
-        var loadedFeeds = feedsService.LoadFeeds();
+        var loadedFeeds = await feedsService.LoadFeedsAsync();
         feeds.Clear();
         feeds.AddRange(loadedFeeds);
         UpdateFeedsListView();
         if (feeds.Any())
         {
             feedsListView.SelectedItem = 0;
+            await RefreshAllFeedsAsync();
         }
     }
 
@@ -135,12 +136,12 @@ public class MainView : Window
         return unreadCount > 0 ? $"{feed.Title} ({unreadCount})" : feed.Title ?? string.Empty;
     }
 
-    private void OnFeedSelected(ListViewItemEventArgs args)
+    private async void OnFeedSelected(ListViewItemEventArgs args)
     {
         var feed = feeds[args.Item];
         if (!feed.IsLoaded)
         {
-            feedsService.LoadFeedItems(feed);
+            await feedsService.LoadFeedItemsAsync(feed);
             UpdateFeedsListView();
         }
         UpdateFeedItemsListView(feed);
@@ -182,7 +183,7 @@ public class MainView : Window
                 {
                     item.IsUnread = false;
                     feed.ReadHashes.Add(item.Fingerprint);
-                    feedsService.SaveFeeds(feeds);
+                    feedsService.SaveFeedsAsync(feeds);
                     UpdateFeedsListView();
                     UpdateFeedItemsListView(feed);
                 });
@@ -190,7 +191,7 @@ public class MainView : Window
         }
     }
 
-    private void OnFeedItemOpened(ListViewItemEventArgs args)
+    private async void OnFeedItemOpened(ListViewItemEventArgs args)
     {
         var feed = feeds[feedsListView.SelectedItem];
         var item = feed.Items[args.Item];
@@ -201,25 +202,25 @@ public class MainView : Window
         {
             item.IsUnread = false;
             feed.ReadHashes.Add(item.Fingerprint);
-            feedsService.SaveFeeds(feeds);
+            await feedsService.SaveFeedsAsync(feeds);
             UpdateFeedsListView();
             UpdateFeedItemsListView(feed);
         }
     }
 
-    private void RefreshFeed()
+    private async Task RefreshFeedAsync()
     {
         var feed = feeds[feedsListView.SelectedItem];
-        feedsService.LoadFeedItems(feed);
+        await feedsService.LoadFeedItemsAsync(feed);
         UpdateFeedsListView();
         UpdateFeedItemsListView(feed);
     }
 
-    private void RefreshAllFeeds()
+    private async Task RefreshAllFeedsAsync()
     {
         foreach (var feed in feeds)
         {
-            feedsService.LoadFeedItems(feed);
+            await feedsService.LoadFeedItemsAsync(feed);
         }
         UpdateFeedsListView();
         UpdateFeedItemsListView(feeds[feedsListView.SelectedItem]);

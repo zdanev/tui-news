@@ -4,17 +4,20 @@ using System.ServiceModel.Syndication;
 using System.Text.Json;
 using System.Xml;
 using TuiNews.Models;
+using System.Net.Http;
+
 
 public class FeedsService
 {
     private readonly string feedsFilePath;
+    private static readonly HttpClient httpClient = new HttpClient();
 
     public FeedsService(string feedsFilePath)
     {
         this.feedsFilePath = feedsFilePath;
     }
 
-    public List<Feed> LoadFeeds()
+    public async Task<List<Feed>> LoadFeedsAsync()
     {
         if (!File.Exists(feedsFilePath))
         {
@@ -23,39 +26,41 @@ public class FeedsService
 
         try
         {
-            var jsonString = File.ReadAllText(feedsFilePath);
+            var jsonString = await File.ReadAllTextAsync(feedsFilePath);
             var feeds = JsonSerializer.Deserialize<List<Feed>>(jsonString) ?? new List<Feed>();
             return feeds;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading feeds from {feedsFilePath}: {ex.Message}");
+            // Console.WriteLine($"Error loading feeds from {feedsFilePath}: {ex.Message}");
             return new List<Feed>();
         }
     }
 
-    public void SaveFeeds(IEnumerable<Feed> feeds)
+    public async Task SaveFeedsAsync(IEnumerable<Feed> feeds)
     {
         try
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
             var jsonString = JsonSerializer.Serialize(feeds, options);
-            File.WriteAllText(feedsFilePath, jsonString);
+            await File.WriteAllTextAsync(feedsFilePath, jsonString);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving feeds to {feedsFilePath}: {ex.Message}");
+            // Console.WriteLine($"Error saving feeds to {feedsFilePath}: {ex.Message}");
         }
     }
 
-    public void LoadFeedItems(Feed feed)
+    public async Task LoadFeedItemsAsync(Feed feed)
     {
         if (string.IsNullOrEmpty(feed.Url)) return;
 
         try
         {
-            using var reader = XmlReader.Create(feed.Url);
-            var syndicationFeed = SyndicationFeed.Load(reader);
+            var feedContent = await httpClient.GetStringAsync(feed.Url);
+            using var stringReader = new StringReader(feedContent);
+            using var xmlReader = XmlReader.Create(stringReader);
+            var syndicationFeed = SyndicationFeed.Load(xmlReader);
 
             feed.Title ??= syndicationFeed.Title?.Text;
 
@@ -82,7 +87,7 @@ public class FeedsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading feed {feed.Url}: {ex.Message}");
+            // Console.WriteLine($"Error reading feed {feed.Url}: {ex.Message}");
             feed.Title = $"Error loading feed: {feed.Url}";
         }
     }
