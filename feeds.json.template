@@ -1,0 +1,130 @@
+[
+  {
+    "title": "Hacker News",
+    "url": "https://news.ycombinator.com/rss"
+  },
+  {
+    "title": "TechCrunch",
+    "url": "https://techcrunch.com/category/startups/feed/"
+  },
+  {
+    "title": "WIRED",
+    "url": "https://www.wired.com/feed/rss"
+  },
+  {
+    "title": "Mashable",
+    "url": "https://feeds.feedburner.com/Mashable"
+  },
+  {
+    "title": "CNET",
+    "url": "https://www.cnet.com/rss/news/"
+  },
+  {
+    "title": "Engadget",
+    "url": "https://www.engadget.com/rss.xml"
+  },
+  {
+    "title": "VentureBeat",
+    "url": "https://venturebeat.com/feed/"
+  },
+  {
+    "title": "The Next Web (TNW)",
+    "url": "https://feeds.feedburner.com/thenextweb"
+  },
+  {
+    "title": "Ars Technica",
+    "url": "https://feeds.feedburner.com/arstechnica/index"
+  },
+  {
+    "title": "TechRadar",
+    "url": "https://www.techradar.com/rss"
+  },
+  {
+    "title": "Techmeme",
+    "url": "https://www.techmeme.com/feed.xml"
+  },
+  {
+    "title": "MIT Technology Review",
+    "url": "https://www.technologyreview.com/feed/"
+  },
+  {
+    "title": "Lifehacker",
+    "url": "https://lifehacker.com/rss/regular/"
+  },
+  {
+    "title": "TechRepublic",
+    "url": "https://www.techrepublic.com/rssfeeds/articles/"
+  },
+  {
+    "title": "The Verge",
+    "url": "https://www.theverge.com/rss/index.xml"
+  },
+  {
+    "title": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/feed/"
+  },
+  {
+    "title": "Cup of Jo",
+    "url": "https://cupofjo.com/feed/"
+  },
+  {
+    "title": "The Blonde Abroad",
+    "url": "https://theblondeabroad.com/feed"
+  },
+  {
+    "title": "Camille Styles",
+    "url": "https://camillestyles.com/feed"
+  },
+  {
+    "title": "Wit And Delight Blog",
+    "url": "https://witanddelight.com/feed"
+  },
+  {
+    "title": "Corporette",
+    "url": "https://corporette.com/feed/"
+  },
+  {
+    "title": "Julie Blanner",
+    "url": "https://julieblanner.com/feed"
+  },
+  {
+    "title": "BBC News - World",
+    "url": "http://feeds.bbci.co.uk/news/world/rss.xml"
+  },
+  {
+    "title": "BBC News - UK",
+    "url": "http://feeds.bbci.co.uk/news/uk/rss.xml"
+  },
+  {
+    "title": "BBC News - Health",
+    "url": "http://feeds.bbci.co.uk/news/health/rss.xml"
+  },
+  {
+    "title": "BBC News - Business",
+    "url": "http://feeds.bbci.co.uk/news/business/rss.xml"
+  },
+  {
+    "title": "BBC News - Technology",
+    "url": "http://feeds.bbci.co.uk/news/technology/rss.xml"
+  },
+  {
+    "title": "BBC News - Science & Environment",
+    "url": "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+  },
+  {
+    "title": "BBC News - Entertainment & Arts",
+    "url": "http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+  },
+  {
+    "title": "BBC News - Culture",
+    "url": "http://feeds.bbci.co.uk/news/culture/rss.xml"
+  },
+  {
+    "title": "BBC News - Travel",
+    "url": "http://feeds.bbci.co.uk/news/travel/rss.xml"
+  },
+  {
+    "title": "BBC Sport",
+    "url": "http://feeds.bbci.co.uk/sport/rss.xml"
+  }
+]
