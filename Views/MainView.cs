@@ -60,7 +60,7 @@ public class MainView : Window
 
         var horizontalLine = new LineView(Orientation.Horizontal)
         {
-            X = Pos.Right(feedsListView),
+            X = Pos.Right(verticalLine),
             Y = Pos.Bottom(feedItemsListView),
             Width = Dim.Fill()
         };
