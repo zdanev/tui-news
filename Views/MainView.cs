@@ -10,13 +10,12 @@ public class MainView : Window
 {
     private readonly FeedsService feedsService;
     private readonly ListView feedsListView;
-    private readonly List<Feed> feeds;
+    private readonly List<Feed> feeds = [];
     private readonly ListView feedItemsListView;
     private readonly Label titleLabel;
     private readonly Label urlLabel;
     private readonly TextView contentTextView;
-    private readonly StatusItem refreshFeedStatusItem;
-    private readonly StatusItem refreshAllStatusItem;
+    private readonly StatusItem currentStatus;
     private Timer? autoReadTimer;
 
     public MainView(FeedsService feedsService)
@@ -95,19 +94,17 @@ public class MainView : Window
         };
         Add(contentTextView);
 
-        refreshFeedStatusItem = new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", async () => await RefreshFeedAsync());
-        refreshAllStatusItem = new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", async () => await RefreshAllFeedsAsync());
-
-        var statusBar = new StatusBar(new[]
-        {
-            refreshFeedStatusItem,
-            refreshAllStatusItem,
-            new(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop())
-        });
+        currentStatus = new StatusItem(Key.Null, "", null);
+        var statusBar = new StatusBar(
+        [
+            new StatusItem(Key.CtrlMask | Key.R, "~^R~ Refresh Feed", async () => await RefreshFeedAsync()),
+            new StatusItem(Key.CtrlMask | Key.T, "~^T~ Refresh All", async () => await RefreshAllFeedsAsync()),
+            new StatusItem(Key.CtrlMask | Key.Q, "~^Q~ Quit", () => Application.RequestStop()),
+            currentStatus
+        ]);
         Application.Top.Add(statusBar);
 
-        feeds = new List<Feed>();
-                _ = LoadFeedsAsync();
+        _ = LoadFeedsAsync();
     }
 
     private async Task LoadFeedsAsync()
@@ -209,9 +206,11 @@ public class MainView : Window
     private async Task RefreshFeedAsync()
     {
         var feed = feeds[feedsListView.SelectedItem];
+        SetStatus($"Refreshing feed: {feed.Title}");
         await feedsService.LoadFeedItemsAsync(feed);
         UpdateFeedsListView();
         UpdateFeedItemsListView(feed);
+        SetStatus("");
     }
 
     private async Task RefreshAllFeedsAsync()
@@ -222,5 +221,11 @@ public class MainView : Window
         }
         UpdateFeedsListView();
         UpdateFeedItemsListView(feeds[feedsListView.SelectedItem]);
+    }
+
+    private void SetStatus(string status)
+    {
+        currentStatus.Title = status;
+        Application.Refresh();
     }
 }
